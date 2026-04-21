@@ -1,0 +1,3 @@
+APP_DESCRIPTION = "Marine Oil Spill Detection System Backend"
+DEFAULT_RISK_THRESHOLD = 75.0
+DEFAULT_ALERT_STATUS = "sent"

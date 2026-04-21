@@ -1,0 +1,1 @@
+from app.services.satellite.satellite_fetch_service import SatelliteFetchService
