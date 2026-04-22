@@ -12,6 +12,15 @@ class Settings(BaseSettings):
 
     cors_origins: list[str] = ["*"]
 
+    aisstream_api_key: str = ""
+    planet_api_key: str = ""
+    planet_user_id: str = ""
+
+    # Telegram Configuration
+    telegram_bot_token: str = ""
+    telegram_chat_id: str = ""
+    enable_telegram: bool = True
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore"

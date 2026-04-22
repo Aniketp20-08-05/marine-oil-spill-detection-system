@@ -1,4 +1,4 @@
-from app.api.routes import vessels, anomalies, risk_zones, alerts, actions, pipeline, health
+from app.api.routes import vessels, anomalies, risk_zones, alerts, actions, pipeline, health, teams
 
 __all__ = [
     "vessels",
@@ -8,4 +8,5 @@ __all__ = [
     "actions",
     "pipeline",
     "health",
+    "teams",
 ]

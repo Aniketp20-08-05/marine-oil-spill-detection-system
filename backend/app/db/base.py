@@ -6,6 +6,8 @@ from app.models.spill_detection import SpillDetection
 from app.models.risk_zone import RiskZone
 from app.models.alert import Alert
 from app.models.response_action import ResponseAction
+from app.models.team import Team
+from app.models.team_notification import TeamNotification
 
 __all__ = [
     "Vessel",
@@ -16,4 +18,6 @@ __all__ = [
     "RiskZone",
     "Alert",
     "ResponseAction",
+    "Team",
+    "TeamNotification",
 ]

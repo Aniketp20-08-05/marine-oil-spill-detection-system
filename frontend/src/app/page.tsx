@@ -2,76 +2,86 @@
 
 import { useState } from "react";
 import Header from "@/components/header/Header";
-import MetricsRow from "@/components/cards/MetricsRow";
-import LiveRiskMap from "@/components/map/LiveRiskMap";
-import VesselList from "@/components/vessel-panel/VesselList";
+import StatsBar from "@/components/dashboard/StatsBar";
+import LiveHeroMap from "@/components/map/LiveHeroMap";
+import TrackedVesselsPanel from "@/components/vessel-panel/TrackedVesselsPanel";
+import DataTabsPanel from "@/components/data-panel/DataTabsPanel";
+import ResponseActionsPanel from "@/components/response-panel/ResponseActionsPanel";
 import AlertPanel from "@/components/alerts/AlertPanel";
-import PipelineControl from "@/components/controls/PipelineControl";
-import { useVessels } from "@/hooks/useVessels";
-import { usePipeline } from "@/hooks/usePipeline";
+import LastUpdated from "@/components/common/LastUpdated";
+import { useMonitoringData } from "@/hooks/useMonitoringData";
 import { Vessel } from "@/types/vessel";
+import { useThemeMode } from "@/context/ThemeContext";
 
 export default function HomePage() {
-  const { vessels, loading, error } = useVessels();
   const {
-    data: pipelineData,
-    loading: pipelineLoading,
-    error: pipelineError,
-    executePipeline,
-  } = usePipeline(true);
+    vessels,
+    anomalies,
+    alerts,
+    riskZones,
+    loading,
+    error,
+    lastUpdated,
+  } = useMonitoringData();
 
   const [selectedVessel, setSelectedVessel] = useState<Vessel | null>(null);
+  const { theme } = useThemeMode();
+
+  const isDark = theme === "dark";
 
   return (
-    <main className="min-h-screen bg-slate-950 p-6">
+    <main
+      className={`min-h-screen p-6 transition ${
+        isDark ? "bg-[#08121a]" : "bg-[#f2f6fb]"
+      }`}
+    >
       <div className="mx-auto max-w-7xl space-y-6">
         <Header />
 
+        {!loading && !error && (
+          <div className="flex justify-end">
+            <LastUpdated lastUpdated={lastUpdated} />
+          </div>
+        )}
+
         {loading && (
-          <div className="rounded-xl bg-slate-800 p-4 text-white">
-            Loading vessel data...
+          <div
+            className={`rounded-[24px] border p-5 ${
+              isDark
+                ? "border-slate-700 bg-[#121d26] text-white"
+                : "border-slate-200 bg-white text-slate-900"
+            }`}
+          >
+            Loading monitoring data...
           </div>
         )}
 
         {error && (
-          <div className="rounded-xl bg-red-600/20 p-4 text-red-200">
+          <div className="rounded-[24px] border border-red-400 bg-red-500/10 p-5 text-red-300">
             Error: {error}
           </div>
         )}
 
         {!loading && !error && (
           <>
-            <MetricsRow vessels={vessels} />
-
-            <PipelineControl
-              onRun={executePipeline}
-              loading={pipelineLoading}
+            <StatsBar
+              vessels={vessels}
+              anomalies={anomalies}
+              alerts={alerts}
+              riskZones={riskZones}
             />
 
-            {pipelineError && (
-              <div className="rounded-xl bg-red-600/20 p-4 text-red-200">
-                Pipeline Error: {pipelineError}
-              </div>
-            )}
+            <LiveHeroMap vessels={vessels} riskZones={riskZones} selectedVessel={selectedVessel} />
 
-            <section className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-              <div className="space-y-6 xl:col-span-4">
-                <VesselList
-                  vessels={vessels}
-                  onSelect={setSelectedVessel}
-                  selectedVessel={selectedVessel}
-                />
-
-                <AlertPanel results={pipelineData?.results ?? []} />
-              </div>
-
-              <div className="xl:col-span-8">
-                <LiveRiskMap
-                  vessels={vessels}
-                  selectedVessel={selectedVessel}
-                />
-              </div>
-            </section>
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <TrackedVesselsPanel
+                vessels={vessels}
+                selectedVessel={selectedVessel}
+                onSelect={setSelectedVessel}
+              />
+              <DataTabsPanel vessels={vessels} anomalies={anomalies} alerts={alerts} />
+              <ResponseActionsPanel alerts={alerts} />
+            </div>
           </>
         )}
       </div>

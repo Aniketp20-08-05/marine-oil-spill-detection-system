@@ -5,7 +5,9 @@ from pydantic import BaseModel
 class ResponseActionBase(BaseModel):
     alert_id: int
     action_type: str
-    timestamp: datetime
+    status: str = "pending"
+    description: str | None = None
+    triggered_by: str = "system"
 
 
 class ResponseActionCreate(ResponseActionBase):
@@ -14,6 +16,7 @@ class ResponseActionCreate(ResponseActionBase):
 
 class ResponseActionRead(ResponseActionBase):
     action_id: int
+    timestamp: datetime
 
     class Config:
         from_attributes = True

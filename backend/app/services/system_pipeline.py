@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from app.models.alert import Alert
 from app.models.risk_zone import RiskZone
 from app.repositories.alert_repository import AlertRepository
@@ -78,9 +79,21 @@ class SystemPipeline:
             )
             risk_zone = self.risk_zone_repository.create(risk_zone)
 
+            # 6. Build Alert Message
             alert_message = build_alert_message(vessel, risk_result)
-            alert_delivery = self.alert_service.send_sms_alert(alert_message)
 
+            # 7. Check for duplicate alerts (cooldown: 30 minutes)
+            recent_alert = self.db.query(Alert).filter(
+                Alert.message.like(f"%{vessel['name']}%"),
+                Alert.timestamp >= datetime.utcnow() - timedelta(minutes=30)
+            ).first()
+
+            if recent_alert:
+                alert_delivery = {"status": "skipped (duplicate)", "message": "Alert already sent recently."}
+            else:
+                alert_delivery = self.alert_service.send_sms_alert(alert_message)
+
+            # 8. Store Alert in DB
             alert = Alert(
                 risk_zone_id=risk_zone.zone_id,
                 message=alert_message,

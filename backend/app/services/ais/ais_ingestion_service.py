@@ -1,3 +1,6 @@
+import asyncio
+import json
+import websockets
 from app.models.ais_record import AISRecord
 from app.repositories.ais_record_repository import AISRecordRepository
 from app.repositories.vessel_repository import VesselRepository
@@ -10,6 +13,57 @@ class AISIngestionService:
         self.ais_record_repository = AISRecordRepository(db)
 
     def fetch_ais_data(self) -> list[dict]:
+        return asyncio.run(self._fetch_ais_stream())
+
+    async def _fetch_ais_stream(self) -> list[dict]:
+        from app.core.config import settings
+        api_key = settings.aisstream_api_key
+        if not api_key:
+            print("Warning: No AISStream API key configured. Returning mock data.")
+            return self._mock_ais_data()
+
+        print("Connecting to AIS stream...")
+        url = "wss://stream.aisstream.io/v0/stream"
+        subscription = {
+            "APIKey": api_key,
+            "BoundingBoxes": [[[-90, -180], [90, 180]]],
+            "FilterMessageTypes": ["PositionReport"]
+        }
+
+        vessels = []
+        try:
+            async with websockets.connect(url) as websocket:
+                await websocket.send(json.dumps(subscription))
+                
+                # Fetch up to 5 vessels per pipeline run
+                for _ in range(5):
+                    message_str = await asyncio.wait_for(websocket.recv(), timeout=5.0)
+                    message = json.loads(message_str)
+                    
+                    print("Received a message")
+                    if message.get("MessageType") == "PositionReport":
+                        report = message["Message"]["PositionReport"]
+                        print(f"Added vessel {report.get('UserID')}")
+                        vessels.append({
+                            "name": f"Vessel_{report['UserID']}",
+                            "imo_number": str(report.get("UserID", "")),
+                            "type": "Unknown",
+                            "latitude": report["Latitude"],
+                            "longitude": report["Longitude"],
+                            "sog": report.get("Sog", 0.0),
+                            "cog": report.get("Cog", 0.0),
+                            "heading": report.get("TrueHeading", 0.0),
+                            "destination": "Unknown",
+                        })
+        except asyncio.TimeoutError:
+            print("AISStream fetch timed out.")
+        except Exception as e:
+            print(f"Error fetching from AISStream: {e}")
+
+        print(f"Returning {len(vessels)} vessels from stream")
+        return vessels if vessels else self._mock_ais_data()
+
+    def _mock_ais_data(self) -> list[dict]:
         return [
             {
                 "name": "MV Samudra Devi",

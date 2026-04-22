@@ -12,6 +12,9 @@ class ResponseAction(Base):
     action_id = Column(Integer, primary_key=True, index=True)
     alert_id = Column(Integer, ForeignKey("alerts.alert_id"), nullable=False)
     action_type = Column(String, nullable=False)
+    status = Column(String, default="pending", nullable=False)  # pending, executing, completed, failed
+    description = Column(String, nullable=True)
+    triggered_by = Column(String, default="system", nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     alert = relationship("Alert", back_populates="response_actions")

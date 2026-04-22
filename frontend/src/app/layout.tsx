@@ -1,9 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Marine Oil Spill Detection System",
-  description: "AIS and satellite-based oil spill monitoring dashboard",
+  description: "AIS and satellite-based marine monitoring dashboard",
 };
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
