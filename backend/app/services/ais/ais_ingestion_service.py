@@ -12,10 +12,7 @@ class AISIngestionService:
         self.vessel_repository = VesselRepository(db)
         self.ais_record_repository = AISRecordRepository(db)
 
-    def fetch_ais_data(self) -> list[dict]:
-        return asyncio.run(self._fetch_ais_stream())
-
-    async def _fetch_ais_stream(self) -> list[dict]:
+    async def fetch_ais_data(self) -> list[dict]:
         from app.core.config import settings
         api_key = settings.aisstream_api_key
         if not api_key:
@@ -40,7 +37,6 @@ class AISIngestionService:
                     message_str = await asyncio.wait_for(websocket.recv(), timeout=5.0)
                     message = json.loads(message_str)
                     
-                    print("Received a message")
                     if message.get("MessageType") == "PositionReport":
                         report = message["Message"]["PositionReport"]
                         print(f"Added vessel {report.get('UserID')}")
@@ -111,10 +107,11 @@ class AISIngestionService:
             },
         ]
 
-    def sync_vessels_and_records(self) -> list[dict]:
+    async def sync_vessels_and_records(self) -> list[dict]:
         results = []
+        ais_data = await self.fetch_ais_data()
 
-        for payload in self.fetch_ais_data():
+        for payload in ais_data:
             vessel = self.vessel_repository.upsert_from_ais(payload)
 
             ais_record = AISRecord(

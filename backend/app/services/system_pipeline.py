@@ -24,8 +24,8 @@ class SystemPipeline:
         self.risk_zone_repository = RiskZoneRepository(db)
         self.alert_repository = AlertRepository(db)
 
-    def run_monitoring_pipeline(self) -> dict:
-        vessels = self.ais_service.sync_vessels_and_records()
+    async def run_monitoring_pipeline(self) -> dict:
+        vessels = await self.ais_service.sync_vessels_and_records()
         processed_results = []
 
         for vessel in vessels:

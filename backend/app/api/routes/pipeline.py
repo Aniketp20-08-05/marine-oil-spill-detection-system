@@ -8,6 +8,6 @@ router = APIRouter(prefix="/pipeline", tags=["Pipeline"])
 
 
 @router.get("/run")
-def run_pipeline(db: Session = Depends(get_db)):
+async def run_pipeline(db: Session = Depends(get_db)):
     pipeline = SystemPipeline(db)
-    return pipeline.run_monitoring_pipeline()
+    return await pipeline.run_monitoring_pipeline()
