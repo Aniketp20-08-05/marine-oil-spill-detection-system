@@ -41,10 +41,10 @@ export function useMonitoringData() {
       const [vesselsData, anomaliesData, anomalyCountData, alertsData, riskZonesData] =
         await Promise.all([
           fetchJson<Vessel[]>(`${BASE_URL}/vessels/`),
-          fetchJson<Anomaly[]>(`${BASE_URL}/anomalies/?limit=50`),
+          fetchJson<Anomaly[]>(`${BASE_URL}/anomalies/`),
           fetchJson<{ count: number }>(`${BASE_URL}/anomalies/count`),
           fetchJson<AlertItem[]>(`${BASE_URL}/alerts/`),
-          fetchJson<RiskZone[]>(`${BASE_URL}/risk-zones/?limit=20`),
+          fetchJson<RiskZone[]>(`${BASE_URL}/risk-zones/`),
         ]);
 
       setVessels(vesselsData);
