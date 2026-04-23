@@ -50,7 +50,7 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
       zoomControl: false,
       fadeAnimation: true,
       markerZoomAnimation: true
-    }).setView([1.29027, 103.851959], 8);
+    }).setView([15, 60], 3);
 
     L.control.zoom({ position: 'bottomright' }).addTo(leafletMap.current);
 
@@ -183,32 +183,35 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     });
   }, [vessels, anomalies]);
 
-  useEffect(() => {
-    if (!leafletMap.current || !selectedVessel) return;
-    leafletMap.current.setView([selectedVessel.latitude, selectedVessel.longitude], 12, { animate: true });
-  }, [selectedVessel]);
+    // Initial load fit bounds
+    const hasFittedRef = useRef(false);
 
-  useEffect(() => {
-    if (!leafletMap.current) return;
-    
-    // Don't auto-zoom if a specific vessel was just clicked
-    if (selectedVessel) return;
-    
-    if (selectedRegionBounds) {
-      leafletMap.current.fitBounds([
-        [selectedRegionBounds.minLat, selectedRegionBounds.minLon],
-        [selectedRegionBounds.maxLat, selectedRegionBounds.maxLon]
-      ], { animate: true, padding: [20, 20], maxZoom: 12 });
-    } else {
-      // Global region
-      if (riskZones.length > 0) {
-        const bounds = L.latLngBounds(riskZones.map(rz => [rz.latitude, rz.longitude]));
-        leafletMap.current.fitBounds(bounds, { animate: true, padding: [30, 30], maxZoom: 10 });
-      } else {
-        leafletMap.current.setView([20, 0], 2, { animate: true });
-      }
-    }
-  }, [selectedRegionBounds, selectedVessel, riskZones]);
+    useEffect(() => {
+        if (!leafletMap.current || hasFittedRef.current) return;
+        
+        if (riskZones.length > 0) {
+            const bounds = L.latLngBounds(riskZones.map(rz => [rz.latitude, rz.longitude]));
+            leafletMap.current.fitBounds(bounds, { animate: true, padding: [50, 50], maxZoom: 6 });
+            hasFittedRef.current = true;
+        }
+    }, [riskZones]);
+
+    useEffect(() => {
+        if (!leafletMap.current) return;
+        
+        // Manual region selection from UI
+        if (selectedRegionBounds) {
+            leafletMap.current.fitBounds([
+                [selectedRegionBounds.minLat, selectedRegionBounds.minLon],
+                [selectedRegionBounds.maxLat, selectedRegionBounds.maxLon]
+            ], { animate: true, padding: [20, 20], maxZoom: 10 });
+        }
+        
+        // Manual vessel selection from UI
+        if (selectedVessel) {
+            leafletMap.current.setView([selectedVessel.latitude, selectedVessel.longitude], 12, { animate: true });
+        }
+    }, [selectedRegionBounds, selectedVessel]);
 
   return (
     <section className="overflow-hidden rounded-[32px] border border-[var(--highlight)] bg-[var(--bg-card)] shadow-sm">
