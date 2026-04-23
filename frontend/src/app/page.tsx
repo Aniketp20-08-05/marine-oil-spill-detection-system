@@ -70,12 +70,10 @@ export default function HomePage() {
   const filteredAlerts = alerts.filter(al => {
     const bounds = REGION_BOUNDS[selectedRegion];
     if (!bounds) return true;
-    const a = anomalies.find(an => an.anomaly_id === al.anomaly_id);
-    if (!a) return true;
-    const v = vessels.find(v => v.vessel_id === a.vessel_id);
-    if (!v) return true;
-    return v.latitude >= bounds.minLat && v.latitude <= bounds.maxLat && 
-           v.longitude >= bounds.minLon && v.longitude <= bounds.maxLon;
+    const rz = riskZones.find(z => z.zone_id === al.risk_zone_id);
+    if (!rz) return true;
+    return rz.latitude >= bounds.minLat && rz.latitude <= bounds.maxLat && 
+           rz.longitude >= bounds.minLon && rz.longitude <= bounds.maxLon;
   });
 
   return (
