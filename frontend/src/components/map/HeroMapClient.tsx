@@ -16,6 +16,9 @@ type Props = {
   selectedRegionBounds?: { minLat: number; maxLat: number; minLon: number; maxLon: number } | null;
 };
 
+// Persistent state across component remounts (navigation)
+let globalHasFitted = false;
+
 export default function HeroMapClient({ vessels, riskZones, anomalies, selectedVessel, selectedRegionBounds }: Props) {
   const { theme } = useThemeMode();
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -183,16 +186,13 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     });
   }, [vessels, anomalies]);
 
-    // Initial load fit bounds
-    const hasFittedRef = useRef(false);
-
     useEffect(() => {
-        if (!leafletMap.current || hasFittedRef.current) return;
+        if (!leafletMap.current || globalHasFitted) return;
         
         if (riskZones.length > 0) {
             const bounds = L.latLngBounds(riskZones.map(rz => [rz.latitude, rz.longitude]));
             leafletMap.current.fitBounds(bounds, { animate: true, padding: [50, 50], maxZoom: 6 });
-            hasFittedRef.current = true;
+            globalHasFitted = true;
         }
     }, [riskZones]);
 
