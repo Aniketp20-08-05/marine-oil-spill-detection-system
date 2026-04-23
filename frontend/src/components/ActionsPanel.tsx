@@ -99,7 +99,7 @@ export default function ActionsPanel() {
                       ? "bg-green-900 text-green-200"
                       : "bg-yellow-900 text-yellow-200"
                   }`}>
-                    {notification.sms_status?.toUpperCase() || notification.status?.toUpperCase()}
+                    {notification.status?.toUpperCase()}
                   </span>
                 </div>
               </div>
