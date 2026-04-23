@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.core.config import settings
 from app.core.logging_config import setup_logging

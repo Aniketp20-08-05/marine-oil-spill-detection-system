@@ -99,7 +99,7 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
       const circle = L.circle([zone.latitude, zone.longitude], {
         color: color,
         fillColor: color,
-        fillOpacity: isConfirmed ? 0.4 : 0.25,
+        fillOpacity: isConfirmed ? 0.15 : 0.1,
         radius: zone.risk_score * 50,
         weight: isConfirmed ? 3 : 2,
         dashArray: isConfirmed ? '' : '5, 10'
@@ -198,12 +198,12 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
       leafletMap.current.fitBounds([
         [selectedRegionBounds.minLat, selectedRegionBounds.minLon],
         [selectedRegionBounds.maxLat, selectedRegionBounds.maxLon]
-      ], { animate: true, padding: [20, 20] });
+      ], { animate: true, padding: [20, 20], maxZoom: 12 });
     } else {
       // Global region
       if (riskZones.length > 0) {
         const bounds = L.latLngBounds(riskZones.map(rz => [rz.latitude, rz.longitude]));
-        leafletMap.current.fitBounds(bounds, { animate: true, padding: [30, 30] });
+        leafletMap.current.fitBounds(bounds, { animate: true, padding: [30, 30], maxZoom: 10 });
       } else {
         leafletMap.current.setView([20, 0], 2, { animate: true });
       }
