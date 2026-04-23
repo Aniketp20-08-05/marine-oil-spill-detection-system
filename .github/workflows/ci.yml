@@ -27,17 +27,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      - name: Install backend dependencies
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Initialize backend database
-        run: python -m app.db.init_db
-
-      - name: Verify backend app import
-        run: python -c "from app.main import app; print(app.title)"
+      - name: Run Unit & Integration Tests
+        run: |
+          pytest --cov=app --cov-report=xml --cov-report=term
+        env:
+          PYTHONPATH: .
+          DATABASE_URL: sqlite:///./test.db
 
   frontend-check:
     runs-on: ubuntu-latest
@@ -52,12 +50,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install frontend dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: npm install  # Using install instead of ci to sync lockfile in CI if needed
+
+      - name: Run Unit Tests
+        run: npm test
 
       - name: Build frontend
         run: npm run build
