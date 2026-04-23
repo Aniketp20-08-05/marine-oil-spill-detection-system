@@ -15,24 +15,20 @@ export default function TopMetricCard({ icon, title, value }: Props) {
 
   return (
     <div
-      className={`rounded-[24px] border px-5 py-4 shadow-sm ${
-        isDark
-          ? "border-slate-700 bg-[#121d26] text-white"
-          : "border-slate-200 bg-white text-slate-900"
-      }`}
+      style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--highlight)', color: 'var(--text-primary)' }}
+      className="rounded-[24px] border px-5 py-4 shadow-sm"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className={`text-sm ${isDark ? "text-slate-300" : "text-slate-500"}`}>
+          <p style={{ color: 'var(--text-muted)' }} className="text-sm">
             {title}
           </p>
           <h3 className="mt-2 text-3xl font-bold">{value}</h3>
         </div>
 
         <div
-          className={`rounded-2xl p-3 ${
-            isDark ? "bg-slate-800" : "bg-slate-100"
-          }`}
+          style={{ backgroundColor: 'var(--highlight)' }}
+          className="rounded-2xl p-3"
         >
           <AppIcon name={icon} alt={title} size={28} />
         </div>

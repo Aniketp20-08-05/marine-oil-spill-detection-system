@@ -34,11 +34,16 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Initialize database
-        run: python -m app.db.init_db
+      - name: Run Unit & Integration Tests
+        run: |
+          pytest --cov=app --cov-report=xml --cov-report=term
+        env:
+          PYTHONPATH: .
+          DATABASE_URL: sqlite:///./test.db
 
-      - name: Verify backend imports
-        run: python -c "from app.main import app; print(app.title)"
-
-      - name: Verify database tables
-        run: python -c "from app.db.session import engine; from sqlalchemy import inspect; print(inspect(engine).get_table_names())"
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./backend/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false

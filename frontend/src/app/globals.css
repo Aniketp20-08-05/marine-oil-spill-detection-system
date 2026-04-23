@@ -42,12 +42,20 @@ body {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
   -webkit-font-smoothing: antialiased;
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Smooth Theme Transitions for all UI elements except the Leaflet map */
+body, main, header, nav, section, article, aside, 
+div:not([class*="leaflet"]):not([class*="leaflet"] *), 
+button:not([class*="leaflet"] *), 
+a:not([class*="leaflet"] *), 
+p, span, h1, h2, h3, h4, h5, h6, svg, path {
+  transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, color 0.4s ease-in-out, box-shadow 0.4s ease-in-out, fill 0.4s ease-in-out, stroke 0.4s ease-in-out;
 }
 
 @keyframes pulse {
@@ -73,4 +81,25 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--secondary);
+}
+/* Leaflet Dark Mode Fixes */
+[data-theme='dark'] .leaflet-bar a {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--highlight) !important;
+}
+
+[data-theme='dark'] .leaflet-bar a:hover {
+  background-color: var(--highlight) !important;
+}
+
+[data-theme='dark'] .leaflet-container {
+  background: var(--bg-primary) !important;
+}
+
+[data-theme='dark'] .leaflet-popup-content-wrapper,
+[data-theme='dark'] .leaflet-popup-tip {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.4) !important;
 }

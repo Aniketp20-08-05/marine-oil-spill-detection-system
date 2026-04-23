@@ -1,5 +1,15 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
+
+
+class VesselSummary(BaseModel):
+    vessel_id: int
+    name: str
+    type: str
+
+    class Config:
+        from_attributes = True
 
 
 class AnomalyEventBase(BaseModel):
@@ -15,6 +25,7 @@ class AnomalyEventCreate(AnomalyEventBase):
 
 class AnomalyEventRead(AnomalyEventBase):
     anomaly_id: int
+    vessel: Optional[VesselSummary] = None
 
     class Config:
         from_attributes = True

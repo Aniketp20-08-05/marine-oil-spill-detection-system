@@ -10,6 +10,17 @@ class AnomalyRepository:
     def get_all(self) -> list[AnomalyEvent]:
         return self.db.query(AnomalyEvent).all()
 
+    def get_latest(self, limit: int = 50) -> list[AnomalyEvent]:
+        return (
+            self.db.query(AnomalyEvent)
+            .order_by(AnomalyEvent.anomaly_id.desc())
+            .limit(limit)
+            .all()
+        )
+
+    def get_count(self) -> int:
+        return self.db.query(AnomalyEvent).count()
+
     def create(self, anomaly: AnomalyEvent) -> AnomalyEvent:
         self.db.add(anomaly)
         self.db.commit()

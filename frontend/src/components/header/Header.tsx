@@ -11,9 +11,14 @@ export default function Header() {
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-      setCurrentTime(now.getUTCHours().toString().padStart(2, '0') + ":" + 
-                    now.getUTCMinutes().toString().padStart(2, '0') + ":" + 
-                    now.getUTCSeconds().toString().padStart(2, '0') + " UTC LIVE");
+      // IST = UTC + 5:30
+      const istOffset = 5.5 * 60 * 60 * 1000;
+      const ist = new Date(now.getTime() + istOffset);
+      setCurrentTime(
+        ist.getUTCHours().toString().padStart(2, '0') + ":" +
+        ist.getUTCMinutes().toString().padStart(2, '0') + ":" +
+        ist.getUTCSeconds().toString().padStart(2, '0') + " IST LIVE"
+      );
     }, 1000);
     return () => clearInterval(timer);
   }, []);
@@ -25,8 +30,8 @@ export default function Header() {
     >
       <div className="flex items-center justify-between">
         {/* Left: Logo Placeholder */}
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-slate-700 bg-slate-100 text-2xl shadow-inner dark:bg-slate-800">
-           🌊
+        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-slate-700 bg-[#0a1e3b] shadow-inner">
+           <img src="/assets/images/Logo.png" alt="Marine Oil Spill Detection Logo" className="h-[180%] w-auto max-w-none object-contain" />
         </div>
 
         {/* Center: Title */}
@@ -37,7 +42,7 @@ export default function Header() {
         {/* Right: Time & Toggle */}
         <div className="flex items-center gap-6">
           <div className="text-[11px] font-black tracking-widest opacity-60">
-            {currentTime || "00:00:00 UTC LIVE"}
+            {currentTime || "00:00:00 IST LIVE"}
           </div>
           
           <button

@@ -11,6 +11,7 @@ const BASE_URL = "http://localhost:8000";
 export function useMonitoringData() {
   const [vessels, setVessels] = useState<Vessel[]>([]);
   const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
+  const [anomalyCount, setAnomalyCount] = useState<number>(0);
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [riskZones, setRiskZones] = useState<RiskZone[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,16 +38,18 @@ export function useMonitoringData() {
 
   const loadAllData = async () => {
     try {
-      const [vesselsData, anomaliesData, alertsData, riskZonesData] =
+      const [vesselsData, anomaliesData, anomalyCountData, alertsData, riskZonesData] =
         await Promise.all([
           fetchJson<Vessel[]>(`${BASE_URL}/vessels/`),
-          fetchJson<Anomaly[]>(`${BASE_URL}/anomalies/`),
+          fetchJson<Anomaly[]>(`${BASE_URL}/anomalies/?limit=50`),
+          fetchJson<{ count: number }>(`${BASE_URL}/anomalies/count`),
           fetchJson<AlertItem[]>(`${BASE_URL}/alerts/`),
-          fetchJson<RiskZone[]>(`${BASE_URL}/risk-zones/`),
+          fetchJson<RiskZone[]>(`${BASE_URL}/risk-zones/?limit=20`),
         ]);
 
       setVessels(vesselsData);
       setAnomalies(anomaliesData);
+      setAnomalyCount(anomalyCountData.count);
       setAlerts(alertsData);
       setRiskZones(riskZonesData);
       setLastUpdated(new Date());
@@ -78,6 +81,7 @@ export function useMonitoringData() {
   return {
     vessels,
     anomalies,
+    anomalyCount,
     alerts,
     riskZones,
     loading,

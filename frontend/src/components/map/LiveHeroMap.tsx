@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { Vessel } from "@/types/vessel";
 import { RiskZone } from "@/types/riskZone";
 
+import { Anomaly } from "@/types/anomaly";
+
 const HeroMapClient = dynamic(() => import("./HeroMapClient"), {
   ssr: false,
   loading: () => (
@@ -18,9 +20,11 @@ const HeroMapClient = dynamic(() => import("./HeroMapClient"), {
 type Props = {
   vessels: Vessel[];
   riskZones: RiskZone[];
+  anomalies: Anomaly[];
   selectedVessel: Vessel | null;
+  selectedRegionBounds: { minLat: number; maxLat: number; minLon: number; maxLon: number } | null;
 };
 
-export default function LiveHeroMap({ vessels, riskZones, selectedVessel }: Props) {
-  return <HeroMapClient vessels={vessels} riskZones={riskZones} selectedVessel={selectedVessel} />;
+export default function LiveHeroMap({ vessels, riskZones, anomalies, selectedVessel, selectedRegionBounds }: Props) {
+  return <HeroMapClient vessels={vessels} riskZones={riskZones} anomalies={anomalies} selectedVessel={selectedVessel} selectedRegionBounds={selectedRegionBounds} />;
 }

@@ -1,23 +1,18 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+from app.api.dependencies import get_db
+from app.repositories.risk_zone_repository import RiskZoneRepository
+from app.schemas.risk_zone import RiskZoneRead
 
 router = APIRouter(prefix="/risk-zones", tags=["Risk Zones"])
 
 
-@router.get("/")
-def get_risk_zones():
-    return [
-        {
-            "id": 1,
-            "latitude": 19.0200,
-            "longitude": 72.8400,
-            "risk_score": 82,
-            "zone_type": "spill_suspected",
-        },
-        {
-            "id": 2,
-            "latitude": 18.9100,
-            "longitude": 72.7600,
-            "risk_score": 68,
-            "zone_type": "high_risk",
-        },
-    ]
+@router.get("/", response_model=list[RiskZoneRead])
+def get_risk_zones(
+    limit: int = Query(default=20, le=100, description="Max number of risk zones to return"),
+    db: Session = Depends(get_db)
+):
+    """Get latest risk zones, ordered by most recent first."""
+    repo = RiskZoneRepository(db)
+    zones = repo.get_latest(limit=limit)
+    return zones

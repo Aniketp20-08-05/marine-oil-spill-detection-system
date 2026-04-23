@@ -16,11 +16,12 @@ export default function LastUpdated({ lastUpdated }: Props) {
 
   return (
     <div
-      className={`rounded-full border px-4 py-2 text-sm font-semibold shadow-sm ${
-        isDark
-          ? "border-slate-700 bg-[#121d26] text-slate-200"
-          : "border-slate-200 bg-white text-slate-700"
-      }`}
+      style={{ 
+        backgroundColor: 'var(--bg-card)', 
+        borderColor: 'var(--highlight)', 
+        color: 'var(--text-primary)' 
+      }}
+      className="rounded-full border px-4 py-2 text-sm font-semibold shadow-sm"
     >
       {text}
     </div>

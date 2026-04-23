@@ -1,18 +1,17 @@
 "use client";
 
 import { Vessel } from "@/types/vessel";
-import { Anomaly } from "@/types/anomaly";
 import { RiskZone } from "@/types/riskZone";
 import { AlertItem } from "@/types/alert";
 
 type Props = {
   vessels: Vessel[];
-  anomalies: Anomaly[];
+  anomalyCount: number;
   riskZones: RiskZone[];
   alerts: AlertItem[];
 };
 
-export default function StatsBar({ vessels, anomalies, riskZones, alerts }: Props) {
+export default function StatsBar({ vessels, anomalyCount, riskZones, alerts }: Props) {
   const stats = [
     {
       label: "Vessels Monitored",
@@ -23,15 +22,15 @@ export default function StatsBar({ vessels, anomalies, riskZones, alerts }: Prop
     },
     {
       label: "Active Anomalies",
-      value: anomalies.length,
-      sub: "3 in last hour",
+      value: anomalyCount,
+      sub: "Detected by pipeline",
       icon: "⚠️",
       color: "var(--primary)"
     },
     {
-      label: "Spill suspicion Zones",
+      label: "Potential Risk Zones",
       value: riskZones.length,
-      sub: "SAR-confirmed",
+      sub: "Aggregated anomalies",
       icon: "🎯",
       color: "var(--accent)"
     },

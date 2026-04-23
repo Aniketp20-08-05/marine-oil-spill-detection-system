@@ -24,22 +24,22 @@ export default function VesselTimeline({ anomalies, alerts }: Props) {
   const isDark = theme === "dark";
 
   const events: TimelineEvent[] = [
-    ...anomalies.map(a => ({
-      id: `anomaly-${a.event_id}`,
+    ...anomalies.slice(0, 15).map(a => ({
+      id: `anomaly-${a.anomaly_id}`,
       type: 'anomaly' as const,
       title: "Anomaly Detected",
       description: a.reason,
-      timestamp: a.timestamp,
-      vessel_name: a.vessel?.name
+      timestamp: a.timestamp ?? new Date().toISOString(),
+      vessel_name: a.vessel?.name ?? `Vessel #${a.vessel_id}`
     })),
-    ...alerts.map(a => ({
+    ...alerts.slice(0, 5).map(a => ({
       id: `alert-${a.alert_id}`,
       type: 'alert' as const,
       title: "Emergency Alert Sent",
       description: a.message,
       timestamp: a.timestamp || new Date().toISOString()
     }))
-  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 20);
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -74,8 +74,11 @@ export default function VesselTimeline({ anomalies, alerts }: Props) {
       {events.map((event) => (
         <div key={event.id} className="relative">
           <div 
-            style={{ backgroundColor: getEventColor(event.type) }}
-            className={`absolute -left-6 top-1.5 h-3 w-3 rounded-full border-2 border-white ring-4 ring-slate-900/5`}
+            style={{ 
+              backgroundColor: getEventColor(event.type),
+              borderColor: 'var(--bg-card)'
+            }}
+            className="absolute -left-6 top-1.5 h-3 w-3 rounded-full border-2 ring-4 ring-slate-900/5"
           ></div>
           
           <div 

@@ -82,10 +82,10 @@ class SystemPipeline:
             # 6. Build Alert Message
             alert_message = build_alert_message(vessel, risk_result)
 
-            # 7. Check for duplicate alerts (cooldown: 30 minutes)
+            # 7. Check for duplicate alerts (cooldown: 5 minutes)
             recent_alert = self.db.query(Alert).filter(
-                Alert.message.like(f"%{vessel['name']}%"),
-                Alert.timestamp >= datetime.utcnow() - timedelta(minutes=30)
+                Alert.message.like(f"%IMO: {vessel['imo_number']}%"),
+                Alert.timestamp >= datetime.utcnow() - timedelta(minutes=5)
             ).first()
 
             if recent_alert:
