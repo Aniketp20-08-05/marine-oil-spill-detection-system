@@ -38,6 +38,7 @@ async def run_periodic_monitoring():
             db = SessionLocal()
             try:
                 pipeline = SystemPipeline(db)
+                # FIX: Remove asyncio.run() and just call the function since we are already in an async loop
                 result = pipeline.run_monitoring_pipeline()
                 print(f"Periodic check complete: {result['total_vessels_processed']} vessels processed.")
             finally:

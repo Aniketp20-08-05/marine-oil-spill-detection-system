@@ -6,7 +6,7 @@ import { Anomaly } from "@/types/anomaly";
 import { AlertItem } from "@/types/alert";
 import { RiskZone } from "@/types/riskZone";
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "/api";
 
 export function useMonitoringData() {
   const [vessels, setVessels] = useState<Vessel[]>([]);
