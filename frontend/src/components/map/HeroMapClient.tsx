@@ -7,6 +7,9 @@ import { Vessel } from "@/types/vessel";
 import { RiskZone } from "@/types/riskZone";
 import { Anomaly } from "@/types/anomaly";
 import { useThemeMode } from "@/context/ThemeContext";
+import { fetchDriftPrediction } from "@/services/anomalyService";
+import { DriftPrediction } from "@/types/drift";
+import { useState } from "react";
 
 type Props = {
   vessels: Vessel[];
@@ -25,6 +28,9 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
   const leafletMap = useRef<L.Map | null>(null);
   const markersLayer = useRef<L.LayerGroup | null>(null);
   const zonesLayer = useRef<L.LayerGroup | null>(null);
+  const driftLayer = useRef<L.LayerGroup | null>(null);
+  const [activeDrift, setActiveDrift] = useState<DriftPrediction | null>(null);
+  const [loadingDrift, setLoadingDrift] = useState(false);
 
   const getMarkerColor = (vessel: Vessel) => {
     if (vessel.sog < 1) return "#ef4444";
@@ -70,6 +76,20 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
 
     markersLayer.current = L.layerGroup().addTo(leafletMap.current);
     zonesLayer.current = L.layerGroup().addTo(leafletMap.current);
+    driftLayer.current = L.layerGroup().addTo(leafletMap.current);
+
+    // Expose a global function for the popup buttons to call
+    (window as any).predictDrift = async (anomalyId: number) => {
+      setLoadingDrift(true);
+      try {
+        const prediction = await fetchDriftPrediction(anomalyId);
+        setActiveDrift(prediction);
+      } catch (err) {
+        console.error("Failed to fetch drift prediction", err);
+      } finally {
+        setLoadingDrift(false);
+      }
+    };
 
     // CRITICAL: Invalidate size after a short delay to fix grey tile issue
     setTimeout(() => {
@@ -177,7 +197,26 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
       if (anomaly) {
         popupContent += `<hr style="margin:5px 0; border-color: rgba(255,255,255,0.1);"/>`;
         popupContent += `<strong style="color: #ef4444;">🚨 SPILL DETECTED</strong><br/>`;
-        popupContent += `Time: ${new Date(anomaly.timestamp ?? new Date()).toLocaleString()}`;
+        popupContent += `Time: ${new Date(anomaly.timestamp ?? new Date()).toLocaleString()}<br/>`;
+        popupContent += `
+          <button 
+            onclick="window.predictDrift(${anomaly.anomaly_id})"
+            style="
+              margin-top: 8px;
+              width: 100%;
+              background: #ef4444;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              padding: 4px 8px;
+              font-size: 10px;
+              font-weight: bold;
+              cursor: pointer;
+            "
+          >
+            PREDICT DRIFT PATH
+          </button>
+        `;
       }
 
       const marker = L.marker([vessel.latitude, vessel.longitude], { icon });
@@ -185,6 +224,42 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
       marker.addTo(markersLayer.current!);
     });
   }, [vessels, anomalies]);
+
+  // Handle Drift Path Rendering
+  useEffect(() => {
+    if (!leafletMap.current || !driftLayer.current || !activeDrift) return;
+    driftLayer.current.clearLayers();
+
+    const pathPoints = activeDrift.prediction_path.map(p => [p.latitude, p.longitude] as [number, number]);
+    
+    // Draw the path line
+    const polyline = L.polyline(pathPoints, {
+      color: '#ef4444',
+      weight: 3,
+      opacity: 0.7,
+      dashArray: '5, 10'
+    }).addTo(driftLayer.current);
+
+    // Add markers for 12h and 24h marks
+    activeDrift.prediction_path.forEach(p => {
+      if (p.hour === 12 || p.hour === 24 || p.hour === 48) {
+        const dot = L.circleMarker([p.latitude, p.longitude], {
+          radius: 4,
+          color: '#ef4444',
+          fillColor: '#fff',
+          fillOpacity: 1,
+          weight: 2
+        });
+        dot.bindTooltip(`${p.hour}h prediction`, { permanent: false });
+        dot.addTo(driftLayer.current!);
+      }
+    });
+
+    // Zoom to show the path
+    const bounds = polyline.getBounds();
+    leafletMap.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 10 });
+
+  }, [activeDrift]);
 
     useEffect(() => {
         if (!leafletMap.current || globalHasFitted) return;
@@ -233,6 +308,17 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
             <div className="rounded-full bg-blue-900/80 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-xl backdrop-blur-md border border-white/10">
               Risks: {riskZones.length}
             </div>
+            {activeDrift && (
+              <button 
+                onClick={() => {
+                  setActiveDrift(null);
+                  driftLayer.current?.clearLayers();
+                }}
+                className="rounded-full bg-red-600 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-xl hover:bg-red-700 transition-colors border border-white/20"
+              >
+                Clear Drift Path
+              </button>
+            )}
         </div>
       </div>
     </section>

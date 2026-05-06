@@ -10,6 +10,9 @@ class AnomalyRepository:
     def get_all(self) -> list[AnomalyEvent]:
         return self.db.query(AnomalyEvent).all()
 
+    def get_by_id(self, anomaly_id: int) -> AnomalyEvent:
+        return self.db.query(AnomalyEvent).filter(AnomalyEvent.anomaly_id == anomaly_id).first()
+
     def get_latest(self, limit: int = 50) -> list[AnomalyEvent]:
         return (
             self.db.query(AnomalyEvent)
