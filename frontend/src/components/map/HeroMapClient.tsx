@@ -147,8 +147,13 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     if (!leafletMap.current || !markersLayer.current) return;
     markersLayer.current.clearLayers();
 
-    // PERFORMANCE OPTIMIZATION: Limit to 300 vessels to prevent DOM lag
-    const displayVessels = vessels.slice(0, 300);
+    // PERFORMANCE OPTIMIZATION: Prioritize anomalies, then show a limited number of normal vessels
+    const anomalyVesselIds = new Set(anomalies.map(a => a.vessel_id));
+    
+    const anomalyVessels = vessels.filter(v => anomalyVesselIds.has(v.vessel_id));
+    const normalVessels = vessels.filter(v => !anomalyVesselIds.has(v.vessel_id)).slice(0, 50);
+    
+    const displayVessels = [...anomalyVessels, ...normalVessels];
 
     const getRealisticType = (imo: string, original: string) => {
       if (original && original !== "Unknown" && original !== "N/A") return original;
@@ -171,9 +176,10 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     };
 
     displayVessels.forEach((vessel) => {
-      const color = getMarkerColor(vessel);
-      const size = getMarkerSize(vessel);
-      const isHighRisk = vessel.sog < 1;
+      const isAnomaly = anomalyVesselIds.has(vessel.vessel_id);
+      const color = isAnomaly ? "#ef4444" : getMarkerColor(vessel);
+      const size = isAnomaly ? 18 : 8; // Anomalies are larger and more visible
+      const isHighRisk = vessel.sog < 1 || isAnomaly;
 
       const icon = L.divIcon({
         className: "",
@@ -183,8 +189,9 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
             width:${size}px;
             height:${size}px;
             border-radius:999px;
-            border:1px solid rgba(255,255,255,0.5);
-            ${isHighRisk ? `box-shadow: 0 0 5px ${color};` : ""}
+            border:1px solid rgba(255,255,255,0.7);
+            ${isAnomaly ? `box-shadow: 0 0 12px ${color}; z-index: 1000;` : "opacity: 0.6;"}
+            ${isHighRisk && !isAnomaly ? `box-shadow: 0 0 5px ${color};` : ""}
           "></div>
         `,
         iconSize: [size, size],
