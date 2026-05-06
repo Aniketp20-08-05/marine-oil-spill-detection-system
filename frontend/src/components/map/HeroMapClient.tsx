@@ -78,19 +78,6 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     zonesLayer.current = L.layerGroup().addTo(leafletMap.current);
     driftLayer.current = L.layerGroup().addTo(leafletMap.current);
 
-    // Expose a global function for the popup buttons to call
-    (window as any).predictDrift = async (anomalyId: number) => {
-      setLoadingDrift(true);
-      try {
-        const prediction = await fetchDriftPrediction(anomalyId);
-        setActiveDrift(prediction);
-      } catch (err) {
-        console.error("Failed to fetch drift prediction", err);
-      } finally {
-        setLoadingDrift(false);
-      }
-    };
-
     // CRITICAL: Invalidate size after a short delay to fix grey tile issue
     setTimeout(() => {
       leafletMap.current?.invalidateSize();
@@ -105,6 +92,22 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
       leafletMap.current = null;
     };
   }, [theme]);
+
+  // Expose a global function for the popup buttons to call
+  useEffect(() => {
+    (window as any).predictDrift = async (anomalyId: number) => {
+      setLoadingDrift(true);
+      try {
+        const prediction = await fetchDriftPrediction(anomalyId);
+        setActiveDrift(prediction);
+      } catch (err) {
+        console.error("Failed to fetch drift prediction", err);
+        alert("Failed to fetch drift prediction. Make sure the backend is running.");
+      } finally {
+        setLoadingDrift(false);
+      }
+    };
+  }, []);
 
   // Handle Risk Zones
   useEffect(() => {
