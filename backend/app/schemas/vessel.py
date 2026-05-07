@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class VesselBase(BaseModel):
@@ -7,10 +8,10 @@ class VesselBase(BaseModel):
     type: str
     latitude: float
     longitude: float
-    sog: float | None = None
-    cog: float | None = None
-    heading: float | None = None
-    destination: str | None = None
+    sog: Optional[float] = None
+    cog: Optional[float] = None
+    heading: Optional[float] = None
+    destination: Optional[str] = None
 
 
 class VesselCreate(VesselBase):

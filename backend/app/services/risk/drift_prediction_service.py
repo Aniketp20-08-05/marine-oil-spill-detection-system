@@ -1,6 +1,8 @@
+from __future__ import annotations
 import math
 import logging
 from datetime import datetime, timedelta
+from typing import List, Dict
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -16,7 +18,7 @@ class DriftPredictionService:
         # For now, we'll simulate weather data if no key is present
         pass
 
-    def predict_drift(self, start_lat: float, start_lon: float, hours: int = 24) -> list[dict]:
+    def predict_drift(self, start_lat: float, start_lon: float, hours: int = 24) -> List[Dict]:
         """
         Predicts the path of the spill over the given number of hours.
         Returns a list of coordinates with timestamps.
@@ -87,7 +89,7 @@ class DriftPredictionService:
 
         return path
 
-    def get_risk_zones_in_path(self, path: list[dict], risk_zones: list) -> list:
+    def get_risk_zones_in_path(self, path: List[Dict], risk_zones: List) -> List:
         """
         Check if the predicted path intersects with any known eco-sensitive zones.
         """

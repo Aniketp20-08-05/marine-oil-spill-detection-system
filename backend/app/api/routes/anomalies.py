@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, Query
+from __future__ import annotations
+from typing import List, Optional
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app.repositories.anomaly_repository import AnomalyRepository
 from app.schemas.anomaly_event import AnomalyEventRead
 from app.services.risk.drift_prediction_service import DriftPredictionService
-from fastapi import HTTPException
 
 router = APIRouter(prefix="/anomalies", tags=["Anomalies"])
 
@@ -16,7 +17,7 @@ def get_anomaly_count(db: Session = Depends(get_db)):
     return {"count": repo.get_count()}
 
 
-@router.get("/", response_model=list[AnomalyEventRead])
+@router.get("/", response_model=List[AnomalyEventRead])
 def get_anomalies(
     limit: int = Query(default=50, le=500, description="Max number of anomalies to return"),
     db: Session = Depends(get_db)

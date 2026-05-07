@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 
 from app.models.anomaly_event import AnomalyEvent
@@ -7,13 +8,13 @@ class AnomalyRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self) -> list[AnomalyEvent]:
+    def get_all(self) -> List[AnomalyEvent]:
         return self.db.query(AnomalyEvent).all()
 
     def get_by_id(self, anomaly_id: int) -> AnomalyEvent:
         return self.db.query(AnomalyEvent).filter(AnomalyEvent.anomaly_id == anomaly_id).first()
 
-    def get_latest(self, limit: int = 50) -> list[AnomalyEvent]:
+    def get_latest(self, limit: int = 50) -> List[AnomalyEvent]:
         return (
             self.db.query(AnomalyEvent)
             .order_by(AnomalyEvent.anomaly_id.desc())
