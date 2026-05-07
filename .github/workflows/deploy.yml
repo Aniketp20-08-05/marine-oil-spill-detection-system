@@ -36,8 +36,15 @@ jobs:
             
             echo "Deploying to $PROJECT_DIR"
             cd "$PROJECT_DIR"
+            
+            # Fix Git security error
+            git config --global --add safe.directory "$PROJECT_DIR"
+            
+            # Pull latest changes
             git pull origin main
             
-            # Rebuild and restart the backend container
-            docker-compose -f docker/docker-compose.yml up -d --build backend
-            docker image prune -f
+            # Restart backend manually (using your confirmed method)
+            cd backend
+            pkill uvicorn || true
+            nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > log.txt 2>&1 &
+            echo "Backend restarted successfully"
