@@ -1,0 +1,37 @@
+name: Backend Production Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'docker/**'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd ~/marine-oil-spill-detection-system
+            git pull origin main
+            
+            # Rebuild and restart the backend container
+            # Using -d to run in background
+            docker-compose -f docker/docker-compose.yml up -d --build backend
+            
+            # Optional: Clean up old unused images to save space
+            docker image prune -f
