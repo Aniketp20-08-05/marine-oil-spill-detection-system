@@ -43,8 +43,14 @@ jobs:
             # Pull latest changes
             git pull origin main
             
-            # Restart backend manually (using your confirmed method)
+            # Restart backend manually with sudo for permissions
             cd backend
-            pkill uvicorn || true
-            nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > log.txt 2>&1 &
-            echo "Backend restarted successfully"
+            sudo pkill -f uvicorn || true
+            sleep 2
+            sudo nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > log.txt 2>&1 &
+            
+            # Wait a moment and check if it's running
+            sleep 5
+            echo "--- Backend Log Snapshot ---"
+            tail -n 20 log.txt
+            ps aux | grep uvicorn
