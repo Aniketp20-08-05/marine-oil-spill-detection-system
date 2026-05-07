@@ -46,18 +46,13 @@ jobs:
             # Pull latest changes with sudo to be safe
             sudo git pull origin main
             
-            # Restart backend manually with sudo and ensure it stays alive
+            # Restart backend and detach completely
             cd backend
             sudo pkill -f uvicorn || true
-            sleep 2
+            sleep 1
+            sudo nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > log.txt 2>&1 &
             
-            # Use setsid and redirect all streams to ensure it survives disconnect
-            sudo setsid nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 < /dev/null > log.txt 2>&1 &
-            
-            # Wait a moment and verify it's listening on port 8000
-            sleep 5
-            echo "--- Backend Status ---"
-            sudo netstat -tulpn | grep :8000 || echo "Backend NOT listening on 8000!"
-            ps aux | grep uvicorn
+            echo "Deployment triggered. Exiting session to allow process to persist."
+            exit 0
           timeout: 60s
           command_timeout: 10m
