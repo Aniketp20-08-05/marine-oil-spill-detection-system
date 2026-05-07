@@ -93,20 +93,41 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     };
   }, [theme]);
 
-  // Expose a global function for the popup buttons to call
+  // Dedicated function for drift prediction
+  const handleDriftPrediction = async (anomalyId: number) => {
+    console.log("Predicting drift for anomaly:", anomalyId);
+    setLoadingDrift(true);
+    try {
+      const prediction = await fetchDriftPrediction(anomalyId);
+      console.log("Drift prediction result:", prediction);
+      setActiveDrift(prediction);
+    } catch (err) {
+      console.error("Failed to fetch drift prediction", err);
+      alert("Failed to fetch drift prediction. Make sure the backend is running at " + process.env.NEXT_PUBLIC_API_BASE_URL);
+    } finally {
+      setLoadingDrift(false);
+    }
+  };
+
+  // Attach a delegated listener to the map container for clicks on drift buttons
   useEffect(() => {
-    (window as any).predictDrift = async (anomalyId: number) => {
-      setLoadingDrift(true);
-      try {
-        const prediction = await fetchDriftPrediction(anomalyId);
-        setActiveDrift(prediction);
-      } catch (err) {
-        console.error("Failed to fetch drift prediction", err);
-        alert("Failed to fetch drift prediction. Make sure the backend is running.");
-      } finally {
-        setLoadingDrift(false);
+    if (!mapRef.current) return;
+
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.closest('.predict-drift-btn')) {
+        const btn = target.closest('.predict-drift-btn') as HTMLElement;
+        const id = btn.getAttribute('data-anomaly-id');
+        console.log("Drift button clicked for anomaly ID:", id);
+        if (id) {
+          handleDriftPrediction(parseInt(id, 10));
+        }
       }
     };
+
+    const container = mapRef.current;
+    container.addEventListener('click', handleClick);
+    return () => container.removeEventListener('click', handleClick);
   }, []);
 
   // Handle Risk Zones
@@ -210,7 +231,8 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
         popupContent += `Time: ${new Date(anomaly.timestamp ?? new Date()).toLocaleString()}<br/>`;
         popupContent += `
           <button 
-            onclick="window.predictDrift(${anomaly.anomaly_id})"
+            class="predict-drift-btn"
+            data-anomaly-id="${anomaly.anomaly_id}"
             style="
               margin-top: 8px;
               width: 100%;
@@ -267,9 +289,11 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
 
     // Zoom to show the path
     const bounds = polyline.getBounds();
-    leafletMap.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 10 });
+    if (bounds.isValid()) {
+      leafletMap.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 10 });
+    }
 
-  }, [activeDrift]);
+  }, [activeDrift, theme]);
 
     useEffect(() => {
         if (!leafletMap.current || globalHasFitted) return;
