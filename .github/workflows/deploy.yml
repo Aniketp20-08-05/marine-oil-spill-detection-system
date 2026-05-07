@@ -37,11 +37,14 @@ jobs:
             echo "Deploying to $PROJECT_DIR"
             cd "$PROJECT_DIR"
             
+            # Reset permissions so ec2-user can work
+            sudo chown -R ec2-user:ec2-user .
+            
             # Fix Git security error
             git config --global --add safe.directory "$PROJECT_DIR"
             
-            # Pull latest changes
-            git pull origin main
+            # Pull latest changes with sudo to be safe
+            sudo git pull origin main
             
             # Restart backend manually with sudo for permissions
             cd backend
