@@ -26,12 +26,18 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd ~/marine-oil-spill-detection-system
+            # Find the project directory
+            PROJECT_DIR=$(find ~ -name "marine-oil-spill-detection-system" -type d -maxdepth 2 | head -n 1)
+            
+            if [ -z "$PROJECT_DIR" ]; then
+              echo "Project directory not found!"
+              exit 1
+            fi
+            
+            echo "Deploying to $PROJECT_DIR"
+            cd "$PROJECT_DIR"
             git pull origin main
             
             # Rebuild and restart the backend container
-            # Using -d to run in background
             docker-compose -f docker/docker-compose.yml up -d --build backend
-            
-            # Optional: Clean up old unused images to save space
             docker image prune -f
