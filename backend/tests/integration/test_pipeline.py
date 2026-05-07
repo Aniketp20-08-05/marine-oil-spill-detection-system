@@ -1,9 +1,12 @@
+import pytest
+import asyncio
 from app.services.system_pipeline import SystemPipeline
 
-def test_pipeline_execution(db):
+@pytest.mark.asyncio
+async def test_pipeline_execution(db):
     pipeline = SystemPipeline(db)
     # This might take a while as it mocks the AIS stream or uses mock data
-    result = pipeline.run_monitoring_pipeline()
+    result = await pipeline.run_monitoring_pipeline()
     
     assert "total_vessels_processed" in result
     assert "results" in result
