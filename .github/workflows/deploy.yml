@@ -59,3 +59,5 @@ jobs:
             echo "--- Backend Status ---"
             sudo netstat -tulpn | grep :8000 || echo "Backend NOT listening on 8000!"
             ps aux | grep uvicorn
+          timeout: 60s
+          command_timeout: 10m
