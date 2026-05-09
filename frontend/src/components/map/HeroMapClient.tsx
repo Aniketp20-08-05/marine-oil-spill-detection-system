@@ -64,13 +64,11 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     L.control.zoom({ position: 'bottomright' }).addTo(leafletMap.current);
 
     // Using CartoDB Dark Matter for dark mode and OSM for light mode
-    // CartoDB tiles always render labels in English
-    const tileUrl = theme === 'dark'
-      ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-      : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+    // Use Esri World Imagery (Satellite View) for a realistic marine monitoring feel
+    const tileUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
     L.tileLayer(tileUrl, {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
       maxZoom: 19,
     }).addTo(leafletMap.current);
 
