@@ -1,6 +1,7 @@
 import asyncio
 import json
 import websockets
+from typing import List, Dict
 from app.models.ais_record import AISRecord
 from app.repositories.ais_record_repository import AISRecordRepository
 from app.repositories.vessel_repository import VesselRepository
@@ -12,7 +13,7 @@ class AISIngestionService:
         self.vessel_repository = VesselRepository(db)
         self.ais_record_repository = AISRecordRepository(db)
 
-    async def fetch_ais_data(self) -> list[dict]:
+    async def fetch_ais_data(self) -> List[Dict]:
         from app.core.config import settings
         api_key = settings.aisstream_api_key
         if not api_key:
@@ -59,7 +60,7 @@ class AISIngestionService:
         print(f"Returning {len(vessels)} vessels from stream")
         return vessels if vessels else self._mock_ais_data()
 
-    def _mock_ais_data(self) -> list[dict]:
+    def _mock_ais_data(self) -> List[Dict]:
         return [
             {
                 "name": "MV Samudra Devi",
@@ -107,7 +108,7 @@ class AISIngestionService:
             },
         ]
 
-    async def sync_vessels_and_records(self) -> list[dict]:
+    async def sync_vessels_and_records(self) -> List[Dict]:
         results = []
         ais_data = await self.fetch_ais_data()
 

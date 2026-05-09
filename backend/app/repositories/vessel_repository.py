@@ -1,3 +1,4 @@
+from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from app.models.vessel import Vessel
@@ -8,13 +9,13 @@ class VesselRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self) -> list[Vessel]:
+    def get_all(self) -> List[Vessel]:
         return self.db.query(Vessel).all()
 
-    def get_by_id(self, vessel_id: int) -> Vessel | None:
+    def get_by_id(self, vessel_id: int) -> Optional[Vessel]:
         return self.db.query(Vessel).filter(Vessel.vessel_id == vessel_id).first()
 
-    def get_by_imo(self, imo_number: str) -> Vessel | None:
+    def get_by_imo(self, imo_number: str) -> Optional[Vessel]:
         return self.db.query(Vessel).filter(Vessel.imo_number == imo_number).first()
 
     def create(self, vessel_data: VesselCreate) -> Vessel:

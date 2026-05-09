@@ -1,13 +1,14 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
 
 
 class AISRecordBase(BaseModel):
     vessel_id: int
     latitude: float
     longitude: float
-    sog: float | None = None
-    cog: float | None = None
+    sog: Optional[float] = None
+    cog: Optional[float] = None
     timestamp: datetime
 
 

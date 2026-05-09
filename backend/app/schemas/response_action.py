@@ -1,12 +1,13 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
 
 
 class ResponseActionBase(BaseModel):
     alert_id: int
     action_type: str
     status: str = "pending"
-    description: str | None = None
+    description: Optional[str] = None
     triggered_by: str = "system"
 
 

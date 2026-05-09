@@ -1,10 +1,11 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class SpillDetectionBase(BaseModel):
     image_id: int
     confidence_score: float
-    risk_zone_id: int | None = None
+    risk_zone_id: Optional[int] = None
 
 
 class SpillDetectionCreate(SpillDetectionBase):

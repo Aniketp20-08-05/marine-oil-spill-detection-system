@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -15,7 +16,7 @@ def create_team(team_data: TeamCreate, db: Session = Depends(get_db)):
     return repo.create(team_data)
 
 
-@router.get("/", response_model=list[TeamRead])
+@router.get("/", response_model=List[TeamRead])
 def get_all_teams(db: Session = Depends(get_db)):
     """Get all active teams"""
     repo = TeamRepository(db)

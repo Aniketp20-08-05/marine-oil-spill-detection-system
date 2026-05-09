@@ -1,3 +1,4 @@
+from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from app.repositories.response_action_repository import ResponseActionRepository
@@ -34,17 +35,17 @@ class ResponseActionService:
             "team_notifications": team_notifications,
         }
 
-    def get_actions_for_alert(self, alert_id: int) -> list[ResponseActionRead]:
+    def get_actions_for_alert(self, alert_id: int) -> List[ResponseActionRead]:
         """Get all response actions for an alert"""
         actions = self.repository.get_by_alert(alert_id)
         return [ResponseActionRead.model_validate(action) for action in actions]
 
-    def get_all_actions(self) -> list[ResponseActionRead]:
+    def get_all_actions(self) -> List[ResponseActionRead]:
         """Get all response actions"""
         actions = self.repository.get_all()
         return [ResponseActionRead.model_validate(action) for action in actions]
 
-    def update_action_status(self, action_id: int, status: str) -> ResponseActionRead | None:
+    def update_action_status(self, action_id: int, status: str) -> Optional[ResponseActionRead]:
         """Update status of a response action"""
         action = self.repository.update_status(action_id, status)
         if action:

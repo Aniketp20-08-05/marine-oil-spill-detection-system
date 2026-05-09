@@ -1,12 +1,13 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class TeamBase(BaseModel):
     name: str
-    telegram_chat_id: str | None = None
-    email: str | None = None
-    contact_person: str | None = None
-    location: str | None = None
+    telegram_chat_id: Optional[str] = None
+    email: Optional[str] = None
+    contact_person: Optional[str] = None
+    location: Optional[str] = None
     is_active: str = "active"
 
 

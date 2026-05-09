@@ -1,3 +1,4 @@
+from typing import List, Dict
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -21,7 +22,7 @@ class ActionStatusUpdate(BaseModel):
 
 class ActionTriggerResponse(BaseModel):
     action: ResponseActionRead
-    team_notifications: list[dict]
+    team_notifications: List[Dict]
 
 
 @router.post("/", response_model=ActionTriggerResponse)
@@ -36,14 +37,14 @@ def trigger_action(payload: ActionTriggerRequest, db: Session = Depends(get_db))
     )
 
 
-@router.get("/", response_model=list[ResponseActionRead])
+@router.get("/", response_model=List[ResponseActionRead])
 def get_all_actions(db: Session = Depends(get_db)):
     """Get all response actions"""
     service = ResponseActionService(db)
     return service.get_all_actions()
 
 
-@router.get("/alert/{alert_id}", response_model=list[ResponseActionRead])
+@router.get("/alert/{alert_id}", response_model=List[ResponseActionRead])
 def get_actions_by_alert(alert_id: int, db: Session = Depends(get_db)):
     """Get all response actions for a specific alert"""
     service = ResponseActionService(db)

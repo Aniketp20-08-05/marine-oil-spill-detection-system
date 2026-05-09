@@ -1,3 +1,4 @@
+from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from app.models.ais_record import AISRecord
@@ -7,7 +8,7 @@ class AISRecordRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self) -> list[AISRecord]:
+    def get_all(self) -> List[AISRecord]:
         return self.db.query(AISRecord).all()
 
     def create(self, ais_record: AISRecord) -> AISRecord:
@@ -16,7 +17,7 @@ class AISRecordRepository:
         self.db.refresh(ais_record)
         return ais_record
 
-    def get_latest_for_vessel(self, vessel_id: int) -> AISRecord | None:
+    def get_latest_for_vessel(self, vessel_id: int) -> Optional[AISRecord]:
         return (
             self.db.query(AISRecord)
             .filter(AISRecord.vessel_id == vessel_id)

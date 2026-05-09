@@ -1,10 +1,14 @@
+from __future__ import annotations
+from typing import List
+
+
 def evaluate_anomaly_rules(vessel_data: dict) -> dict:
     sog = vessel_data.get("sog", 0) or 0
     cog = vessel_data.get("cog", 0) or 0
     vessel_type = (vessel_data.get("type") or "").lower()
 
     score = 0.0
-    reasons: list[str] = []
+    reasons: List[str] = []
 
     if sog < 1.0:
         score += 45

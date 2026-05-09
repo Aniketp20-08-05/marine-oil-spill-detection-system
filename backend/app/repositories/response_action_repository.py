@@ -1,3 +1,4 @@
+from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from app.models.response_action import ResponseAction
@@ -8,13 +9,13 @@ class ResponseActionRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self) -> list[ResponseAction]:
+    def get_all(self) -> List[ResponseAction]:
         return self.db.query(ResponseAction).all()
 
-    def get_by_alert(self, alert_id: int) -> list[ResponseAction]:
+    def get_by_alert(self, alert_id: int) -> List[ResponseAction]:
         return self.db.query(ResponseAction).filter(ResponseAction.alert_id == alert_id).all()
 
-    def get_by_id(self, action_id: int) -> ResponseAction | None:
+    def get_by_id(self, action_id: int) -> Optional[ResponseAction]:
         return self.db.query(ResponseAction).filter(ResponseAction.action_id == action_id).first()
 
     def create(self, action_data: ResponseActionCreate) -> ResponseAction:
@@ -30,7 +31,7 @@ class ResponseActionRepository:
         self.db.refresh(response_action)
         return response_action
 
-    def update_status(self, action_id: int, status: str) -> ResponseAction | None:
+    def update_status(self, action_id: int, status: str) -> Optional[ResponseAction]:
         action = self.get_by_id(action_id)
         if action:
             action.status = status

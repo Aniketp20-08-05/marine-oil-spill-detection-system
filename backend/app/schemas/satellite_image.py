@@ -1,12 +1,13 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
 
 
 class SatelliteImageBase(BaseModel):
     anomaly_id: int
     latitude: float
     longitude: float
-    reason: str | None = None
+    reason: Optional[str] = None
     timestamp: datetime
 
 

@@ -1,4 +1,5 @@
 import logging
+from typing import List, Dict
 from sqlalchemy.orm import Session
 
 from app.models.team import Team
@@ -33,7 +34,7 @@ class TeamNotificationService:
 
     def notify_teams_for_action(
         self, action_id: int, action_type: str, alert_id: int = None
-    ) -> list[dict]:
+    ) -> List[Dict]:
         """
         Notify relevant teams based on the response action type.
         Sends Telegram alerts to team contacts with incident details.

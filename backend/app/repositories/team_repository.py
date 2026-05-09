@@ -1,3 +1,4 @@
+from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from app.models.team import Team
@@ -9,13 +10,13 @@ class TeamRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self) -> list[Team]:
+    def get_all(self) -> List[Team]:
         return self.db.query(Team).filter(Team.is_active == "active").all()
 
-    def get_by_id(self, team_id: int) -> Team | None:
+    def get_by_id(self, team_id: int) -> Optional[Team]:
         return self.db.query(Team).filter(Team.team_id == team_id).first()
 
-    def get_by_name(self, name: str) -> Team | None:
+    def get_by_name(self, name: str) -> Optional[Team]:
         return self.db.query(Team).filter(Team.name == name).first()
 
     def create(self, team_data: TeamCreate) -> Team:
@@ -45,7 +46,7 @@ class TeamNotificationRepository:
         self.db.refresh(notification)
         return notification
 
-    def get_by_action(self, action_id: int) -> list[TeamNotification]:
+    def get_by_action(self, action_id: int) -> List[TeamNotification]:
         return (
             self.db.query(TeamNotification)
             .filter(TeamNotification.action_id == action_id)
