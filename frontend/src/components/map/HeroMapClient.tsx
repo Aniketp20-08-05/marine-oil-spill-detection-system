@@ -144,9 +144,9 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
       const circle = L.circle([zone.latitude, zone.longitude], {
         color: color,
         fillColor: color,
-        fillOpacity: isConfirmed ? 0.15 : 0.1,
+        fillOpacity: isConfirmed ? 0.4 : 0.25,
         radius: zone.risk_score * 50,
-        weight: isConfirmed ? 3 : 2,
+        weight: isConfirmed ? 4 : 2,
         dashArray: isConfirmed ? '' : '5, 10'
       });
 
@@ -197,7 +197,7 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     displayVessels.forEach((vessel) => {
       const isAnomaly = anomalyVesselIds.has(vessel.vessel_id);
       const color = isAnomaly ? "#ef4444" : getMarkerColor(vessel);
-      const size = isAnomaly ? 18 : 8; // Anomalies are larger and more visible
+      const size = isAnomaly ? 24 : 12; // Increased size for visibility on satellite
       const isHighRisk = vessel.sog < 1 || isAnomaly;
 
       const icon = L.divIcon({
@@ -208,9 +208,9 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
             width:${size}px;
             height:${size}px;
             border-radius:999px;
-            border:1px solid rgba(255,255,255,0.7);
-            ${isAnomaly ? `box-shadow: 0 0 12px ${color}; z-index: 1000;` : "opacity: 0.6;"}
-            ${isHighRisk && !isAnomaly ? `box-shadow: 0 0 5px ${color};` : ""}
+            border:2px solid white;
+            ${isAnomaly ? `box-shadow: 0 0 15px ${color}, inset 0 0 5px rgba(0,0,0,0.5); z-index: 1000;` : "box-shadow: 0 2px 4px rgba(0,0,0,0.5);"}
+            ${isHighRisk && !isAnomaly ? `box-shadow: 0 0 8px ${color}, 0 2px 4px rgba(0,0,0,0.5);` : ""}
           "></div>
         `,
         iconSize: [size, size],
