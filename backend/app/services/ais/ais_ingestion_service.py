@@ -24,7 +24,7 @@ class AISIngestionService:
         url = "wss://stream.aisstream.io/v0/stream"
         subscription = {
             "APIKey": api_key,
-            "BoundingBoxes": [[[15.0, 70.0], [20.0, 73.0]]],
+            "BoundingBoxes": [[[-40.0, 40.0], [30.0, 100.0]]], # Indian Ocean, Arabian Sea, Bay of Bengal
             "FilterMessageTypes": ["PositionReport"]
         }
 
@@ -33,9 +33,9 @@ class AISIngestionService:
             async with websockets.connect(url) as websocket:
                 await websocket.send(json.dumps(subscription))
                 
-                # Fetch up to 5 vessels per pipeline run
-                for _ in range(5):
-                    message_str = await asyncio.wait_for(websocket.recv(), timeout=5.0)
+                # Fetch up to 15 vessels per pipeline run to populate the map faster
+                for _ in range(15):
+                    message_str = await asyncio.wait_for(websocket.recv(), timeout=10.0)
                     message = json.loads(message_str)
                     
                     if message.get("MessageType") == "PositionReport":
