@@ -41,13 +41,17 @@ class SystemPipeline:
                 )
                 continue
 
-            self.anomaly_service.store_anomaly(vessel["vessel_id"], anomaly_result)
+            stored_anomaly = self.anomaly_service.store_anomaly(vessel["vessel_id"], anomaly_result)
 
             satellite_result = self.satellite_service.fetch_satellite_image(
                 latitude=vessel["latitude"],
                 longitude=vessel["longitude"],
                 anomaly_score=anomaly_result["anomaly_score"],
             )
+
+            # Update the stored anomaly with the fetched satellite thumbnail
+            stored_anomaly.satellite_link = satellite_result.get("thumbnail_url")
+            self.db.commit()
 
             spill_result = self.spill_service.process_spill_image(
                 image_data=satellite_result,

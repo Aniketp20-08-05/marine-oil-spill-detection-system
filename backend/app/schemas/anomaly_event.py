@@ -17,6 +17,7 @@ class AnomalyEventBase(BaseModel):
     anomaly_score: float
     reason: str
     timestamp: datetime
+    satellite_link: Optional[str] = None
 
 
 class AnomalyEventCreate(AnomalyEventBase):

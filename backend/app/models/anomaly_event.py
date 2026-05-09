@@ -14,6 +14,7 @@ class AnomalyEvent(Base):
     anomaly_score = Column(Float, nullable=False)
     reason = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+    satellite_link = Column(String, nullable=True)
 
     vessel = relationship("Vessel", back_populates="anomaly_events")
     satellite_image = relationship(

@@ -7,7 +7,15 @@ import { AlertItem } from "@/types/alert";
 import { useThemeMode } from "@/context/ThemeContext";
 import VesselTimeline from "./VesselTimeline";
 
-const getSarBackgroundStyle = (id: number) => {
+const getSarBackgroundStyle = (id: number, satellite_link?: string) => {
+  if (satellite_link) {
+    return {
+      backgroundImage: `url('${satellite_link}')`,
+      backgroundPosition: 'center',
+      backgroundSize: 'cover'
+    };
+  }
+
   const positions = [
     "0% 0%", "50% 20%", "100% 50%", "20% 80%", "70% 90%", "40% 40%", "10% 60%"
   ];
@@ -166,7 +174,7 @@ export default function DataTabsPanel({ vessels, anomalies, alerts }: Props) {
                 >
                    <div 
                      className="absolute inset-0 opacity-60 group-hover:opacity-80 transition-opacity mix-blend-screen grayscale"
-                     style={getSarBackgroundStyle(anomaly.vessel_id)}
+                     style={getSarBackgroundStyle(anomaly.vessel_id, anomaly.satellite_link)}
                    ></div>
                    {/* Scanline / Map grid effect */}
                    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-30"></div>
@@ -221,7 +229,7 @@ export default function DataTabsPanel({ vessels, anomalies, alerts }: Props) {
               <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
                 <div 
                   className="absolute inset-0 opacity-80 mix-blend-screen grayscale"
-                  style={getSarBackgroundStyle(selectedAnomaly.vessel_id)}
+                  style={getSarBackgroundStyle(selectedAnomaly.vessel_id, selectedAnomaly.satellite_link)}
                 ></div>
                 
                 {/* Map grid overlay */}
