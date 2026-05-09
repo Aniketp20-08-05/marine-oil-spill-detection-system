@@ -24,7 +24,7 @@ class AISIngestionService:
         url = "wss://stream.aisstream.io/v0/stream"
         subscription = {
             "APIKey": api_key,
-            "BoundingBoxes": [[[-90, -180], [90, 180]]],
+            "BoundingBoxes": [[[15.0, 70.0], [20.0, 73.0]]],
             "FilterMessageTypes": ["PositionReport"]
         }
 
