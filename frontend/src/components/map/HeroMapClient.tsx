@@ -58,7 +58,10 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     leafletMap.current = L.map(mapRef.current, {
       zoomControl: false,
       fadeAnimation: true,
-      markerZoomAnimation: true
+      markerZoomAnimation: true,
+      minZoom: 3,
+      maxBounds: [[-90, -180], [90, 180]],
+      maxBoundsViscosity: 1.0
     }).setView([15, 60], 3);
 
     L.control.zoom({ position: 'bottomright' }).addTo(leafletMap.current);
@@ -70,6 +73,7 @@ export default function HeroMapClient({ vessels, riskZones, anomalies, selectedV
     L.tileLayer(tileUrl, {
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
       maxZoom: 19,
+      noWrap: true,
     }).addTo(leafletMap.current);
 
     markersLayer.current = L.layerGroup().addTo(leafletMap.current);
