@@ -28,19 +28,19 @@ export default function Header() {
       style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--highlight)' }}
       className="rounded-[32px] border px-8 py-5 shadow-sm"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:justify-between">
         {/* Left: Logo Placeholder */}
-        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-slate-700 bg-[#0a1e3b] shadow-inner">
-           <img src="/assets/images/Logo.png" alt="Marine Oil Spill Detection Logo" className="h-[180%] w-auto max-w-none object-contain" />
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-slate-700 bg-[#0a1e3b] shadow-inner">
+           <img src="/assets/images/Logo.png" alt="Marine Oil Spill Detection Logo" className="h-[130%] w-[130%] max-w-none object-cover" />
         </div>
 
         {/* Center: Title */}
-        <h1 style={{ color: 'var(--text-primary)' }} className="text-xl font-black uppercase tracking-[0.2em] md:text-2xl">
+        <h1 style={{ color: 'var(--text-primary)' }} className="text-center text-lg font-black uppercase tracking-[0.1em] sm:tracking-[0.15em] md:text-2xl md:tracking-[0.2em]">
           MARINE OIL SPILL DETECTION SYSTEM
         </h1>
 
         {/* Right: Time & Toggle */}
-        <div className="flex items-center gap-6">
+        <div className="flex w-full items-center justify-between px-2 md:w-auto md:justify-end md:gap-6 md:px-0">
           <div className="text-[11px] font-black tracking-widest opacity-60">
             {currentTime || "00:00:00 IST LIVE"}
           </div>
@@ -49,7 +49,7 @@ export default function Header() {
             type="button"
             onClick={toggleTheme}
             style={{ backgroundColor: 'var(--highlight)' }}
-            className="relative flex h-8 w-16 items-center rounded-full p-1 transition-all"
+            className="relative flex h-8 w-16 shrink-0 items-center rounded-full p-1 transition-all"
           >
             <div 
                style={{ 

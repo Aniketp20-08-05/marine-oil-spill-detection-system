@@ -85,13 +85,13 @@ export default function HomePage() {
         <Header />
 
         {!loading && !error && (
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-black uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Filter Region</span>
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-start">
+              <span className="text-[10px] font-black uppercase tracking-widest sm:text-xs" style={{ color: 'var(--text-muted)' }}>Filter Region</span>
               <select
                 value={selectedRegion}
                 onChange={(e) => setSelectedRegion(e.target.value as Region)}
-                className="rounded-full px-4 py-2 text-xs font-bold shadow-sm outline-none transition-all focus:ring-2"
+                className="rounded-full px-3 py-2 text-xs font-bold shadow-sm outline-none transition-all focus:ring-2 sm:px-4"
                 style={{ 
                   backgroundColor: 'var(--bg-card)', 
                   color: 'var(--text-primary)',
@@ -109,7 +109,9 @@ export default function HomePage() {
                 </span>
               )}
             </div>
-            <LastUpdated lastUpdated={lastUpdated} />
+            <div className="w-full sm:w-auto">
+              <LastUpdated lastUpdated={lastUpdated} />
+            </div>
           </div>
         )}
 

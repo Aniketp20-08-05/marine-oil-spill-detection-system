@@ -73,10 +73,6 @@ export default function ResponseActionsPanel({ alerts }: Props) {
     >
       <div className="mb-6 flex items-center justify-between">
         <h3 style={{ color: 'var(--text-primary)' }} className="text-lg font-black tracking-tight uppercase">Emergency Response</h3>
-        <div className="flex gap-1.5">
-          <div className="h-2 w-2 rounded-full bg-red-600 animate-pulse"></div>
-          <div className="h-2 w-2 rounded-full bg-red-600/30"></div>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
