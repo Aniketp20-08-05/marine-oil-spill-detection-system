@@ -6,7 +6,8 @@ import { Anomaly } from "@/types/anomaly";
 import { AlertItem } from "@/types/alert";
 import { RiskZone } from "@/types/riskZone";
 
-const BASE_URL = "/api";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 export function useMonitoringData() {
   const [vessels, setVessels] = useState<Vessel[]>([]);

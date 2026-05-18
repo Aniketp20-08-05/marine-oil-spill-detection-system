@@ -112,5 +112,5 @@ class SatelliteFetchService:
             "source": "simulated-satellite-provider (Planet Mock)",
             "priority": priority,
             "image_reference": f"satellite_{latitude}_{longitude}.png",
-            "thumbnail_url": "https://tiles.planet.com/data/v1/layers/global_monthly_2023_01_mosaic/tiles/14/8381/5471.png" # Example mosaic tile
+            "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Oil_spill_from_Montara_offshore_oil_platform_in_the_Timor_Sea_-_radar_image_by_TerraSAR-X.jpg"
         }
