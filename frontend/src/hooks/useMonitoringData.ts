@@ -6,8 +6,20 @@ import { Anomaly } from "@/types/anomaly";
 import { AlertItem } from "@/types/alert";
 import { RiskZone } from "@/types/riskZone";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const getApiBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname && !["localhost", "127.0.0.1"].includes(hostname)) {
+      return "https://marine-spill-api.duckdns.org";
+    }
+  }
+  return "http://127.0.0.1:8000";
+};
+
+const BASE_URL = getApiBaseUrl();
 
 export function useMonitoringData() {
   const [vessels, setVessels] = useState<Vessel[]>([]);

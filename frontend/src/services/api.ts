@@ -1,5 +1,17 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const getApiBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname && !["localhost", "127.0.0.1"].includes(hostname)) {
+      return "https://marine-spill-api.duckdns.org";
+    }
+  }
+  return "http://127.0.0.1:8000";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export async function apiGet<T>(endpoint: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
