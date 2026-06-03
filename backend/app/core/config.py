@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./marine.db"
 
-    cors_origins: list[str] = ["*"]
+    cors_origins: list[str] = ["*", "https://harrison-chapters-connected-rates.trycloudflare.com"]
 
     aisstream_api_key: str = ""
     planet_api_key: str = ""

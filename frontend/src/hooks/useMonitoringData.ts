@@ -13,7 +13,7 @@ const getApiBaseUrl = () => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname && !["localhost", "127.0.0.1"].includes(hostname)) {
-      return "https://cuisine-twist-max-filing.trycloudflare.com";
+      return "https://harrison-chapters-connected-rates.trycloudflare.com";
     }
   }
   return "http://127.0.0.1:8000";
