@@ -80,8 +80,8 @@ class SatelliteFetchService:
             properties = latest_feature["properties"]
             
             # 4. Get thumbnail URL
-            # Planet thumbnails are usually at /data/v1/item-types/{item_type}/items/{item_id}/thumb
-            thumbnail_url = f"{self.base_url}/item-types/PSScene/items/{item_id}/thumb"
+            # Extract thumbnail link from the feature's _links, falling back to constructing it if missing
+            thumbnail_url = latest_feature.get("_links", {}).get("thumbnail") or f"https://tiles.planet.com/data/v1/item-types/PSScene/items/{item_id}/thumb"
             
             logger.info(f"Successfully fetched Planet imagery metadata for {item_id}")
             

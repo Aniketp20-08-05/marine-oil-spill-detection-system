@@ -12,7 +12,8 @@ const getSarBackgroundStyle = (id: number, satellite_link?: string) => {
     return {
       backgroundImage: `url('${satellite_link}')`,
       backgroundPosition: 'center',
-      backgroundSize: 'cover'
+      backgroundSize: 'cover',
+      transform: 'scale(1.2)' // Scale up to crop out angled satellite swath black margins
     };
   }
 

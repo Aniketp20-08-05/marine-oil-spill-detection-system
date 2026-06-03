@@ -57,12 +57,13 @@ def get_anomaly_image(anomaly_id: int, db: Session = Depends(get_db)):
     if not anomaly or not anomaly.satellite_link:
         return RedirectResponse(fallback_url)
         
-    # If it is the mock tiles URL, redirect to the stable fallback immediately
-    if "tiles.planet.com" in anomaly.satellite_link:
-        return RedirectResponse(fallback_url)
+    # Translate api.planet.com thumbnail URLs to tiles.planet.com since api.planet.com returns 404 for thumbs
+    target_link = anomaly.satellite_link
+    if "api.planet.com" in target_link and target_link.endswith("/thumb"):
+        target_link = target_link.replace("api.planet.com", "tiles.planet.com")
         
-    # Fetch from Planet API using the API key
-    if "api.planet.com" in anomaly.satellite_link:
+    # Fetch from Planet API (tiles or api) using the API key
+    if "tiles.planet.com" in target_link or "api.planet.com" in target_link:
         from app.core.config import settings
         api_key = settings.planet_api_key
         if not api_key:
@@ -71,12 +72,13 @@ def get_anomaly_image(anomaly_id: int, db: Session = Depends(get_db)):
             
         try:
             response = requests.get(
-                anomaly.satellite_link,
+                target_link,
                 auth=(api_key, ""),
                 timeout=10
             )
             if response.status_code == 200:
-                return StreamingResponse(io.BytesIO(response.content), media_type="image/png")
+                media_type = response.headers.get("Content-Type", "image/png")
+                return StreamingResponse(io.BytesIO(response.content), media_type=media_type)
             else:
                 logger.error(f"Failed to fetch image from Planet API (Status {response.status_code}): {response.text}")
         except Exception as e:
