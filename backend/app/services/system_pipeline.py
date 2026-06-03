@@ -41,6 +41,21 @@ class SystemPipeline:
                 )
                 continue
 
+            # Prevent duplicate anomalies (cooldown: 5 minutes)
+            from app.models.anomaly_event import AnomalyEvent
+            recent_anomaly = self.db.query(AnomalyEvent).filter(
+                AnomalyEvent.vessel_id == vessel["vessel_id"],
+                AnomalyEvent.timestamp >= datetime.utcnow() - timedelta(minutes=5)
+            ).first()
+
+            if recent_anomaly:
+                processed_results.append({
+                    "vessel": vessel,
+                    "status": "skipped (duplicate anomaly)",
+                    "anomaly": anomaly_result,
+                })
+                continue
+
             stored_anomaly = self.anomaly_service.store_anomaly(vessel["vessel_id"], anomaly_result)
 
             satellite_result = self.satellite_service.fetch_satellite_image(
