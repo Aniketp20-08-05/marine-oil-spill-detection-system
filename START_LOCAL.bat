@@ -12,8 +12,8 @@ echo [2/3] Starting Next.js Frontend Service in a new window...
 start "Marine Frontend" powershell -NoExit -Command "cd frontend; npm run dev"
 
 echo.
-echo [3/3] Launching web browser at http://localhost:3000 in 5 seconds...
-timeout /t 5 >nul
+echo [3/3] Launching web browser at http://localhost:3000 in 15 seconds...
+timeout /t 15 >nul
 start http://localhost:3000
 
 echo.
